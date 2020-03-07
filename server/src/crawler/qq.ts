@@ -2,12 +2,13 @@
  * @Author: MuRong
  * @Date: 2020-02-24 14:46:56
  * @LastEditors: MuRong
- * @LastEditTime: 2020-02-25 17:12:45
+ * @LastEditTime: 2020-03-07 20:39:51
  * @Description: QQ音乐类
- * @FilePath: \node-crawler\src\crawler\qq.ts
+ * @FilePath: \music-rank-crawler\server\src\crawler\qq.ts
  */
 import BaseCrawler from "./base";
 import cheerio from "cheerio";
+import JieBa from 'nodejieba'
 import {
   typeResultInterface,
   typeListInterface,
@@ -111,12 +112,14 @@ class QqCrawler extends BaseCrawler {
     if (code === 0) {
       let data = detail.data.songInfoList;
       const total = detail.data.data.totalNum;
+      let names: string = '';
       let result: songsResultInterface[] = data.map(
         (item: any, index: number) => {
           const songTime = s_to_hs(item.interval);
           const id = item.id;
           const imgUrl = `http://y.gtimg.cn/music/photo_new/T002R90x90M000${item.album.mid}.jpg`;
-          const name = item.title
+          const name = item.title;
+          names += name
           const singerName = item.singer
             .map((singer: any) => {
               return singer.name;
@@ -135,7 +138,9 @@ class QqCrawler extends BaseCrawler {
           };
         }
       );
-      return new Success({ body: Object.assign({ result }, { total }) });
+      return new Success({
+        body: Object.assign({ result }, { total }, { words: JieBa.extract(names, 100) })
+      });
     } else {
       return new Failed({ msg: "获取QQ音乐歌曲列表错误" });
     }

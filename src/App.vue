@@ -2,9 +2,9 @@
  * @Author: MuRong
  * @Date: 2020-02-25 18:29:11
  * @LastEditors: MuRong
- * @LastEditTime: 2020-02-25 21:03:39
+ * @LastEditTime: 2020-03-07 20:39:01
  * @Description: 
- * @FilePath: \vue-music-rank\src\App.vue
+ * @FilePath: \music-rank-crawler\src\App.vue
  -->
 <template>
   <div class="home">
@@ -39,7 +39,7 @@
                 </el-menu>
               </el-aside>
               <el-main>
-                <el-table
+                <!-- <el-table
                   :data="tableData"
                   stripe
                   style="width: 100%"
@@ -72,7 +72,9 @@
                   </el-table-column>
                   <el-table-column prop="name" label="歌曲名称" align="center">
                     <template slot-scope="scope">
-                      <el-link type="primary" :href="scope.row.url">{{ scope.row.name }}</el-link>
+                      <el-link type="primary" :href="scope.row.url">{{
+                        scope.row.name
+                      }}</el-link>
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -85,7 +87,8 @@
                     label="歌曲时间"
                     align="center"
                   ></el-table-column>
-                </el-table>
+                </el-table> -->
+                <Word-Cloud-Chart :data="words" v-if="words.length !== 0"></Word-Cloud-Chart>
               </el-main>
             </el-container>
           </el-tab-pane>
@@ -98,13 +101,18 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import request from "./request";
+import WordCloudChart from './components/WordCloudChart.vue'
 interface params {
   type: any;
   num: any;
   id: any;
   page: any;
 }
-@Component
+@Component({
+  components: {
+    WordCloudChart
+  }
+})
 export default class App extends Vue {
   tabList: any = [];
   navList: any = [];
@@ -117,6 +125,7 @@ export default class App extends Vue {
     id: undefined,
     page: undefined
   };
+  words: [] = [];
   resetParams() {
     this.params = {
       type: undefined,
@@ -130,7 +139,7 @@ export default class App extends Vue {
     this.getSongsList();
   }
   handleClickTab(tab: any, event: any) {
-    this.resetParams()
+    this.resetParams();
     const type = Number(tab.name);
     this.params.type = type;
     this.getRankingList(type);
@@ -154,6 +163,13 @@ export default class App extends Vue {
     res = await request("/getSongsList", {
       params: this.params
     });
+    this.words = res.words.map((item: any) => {
+      return {
+        name: item.word,
+        value: item.weight
+      };
+    });
+    console.log(this.words)
     this.tableLoading = false;
     this.tableData = res.result;
   }
