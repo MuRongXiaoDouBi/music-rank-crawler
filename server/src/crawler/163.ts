@@ -2,11 +2,12 @@
  * @Author: MuRong
  * @Date: 2020-02-25 16:15:49
  * @LastEditors: MuRong
- * @LastEditTime: 2020-02-25 20:50:53
+ * @LastEditTime: 2020-03-08 19:24:59
  * @Description:
- * @FilePath: \node-crawler\src\crawler\163.ts
+ * @FilePath: \music-rank-crawler\server\src\crawler\163.ts
  */
 import BaseCrawler from "./base";
+import JieBa from 'nodejieba'
 
 import {
   typeResultInterface,
@@ -84,12 +85,14 @@ class WangyiCrawler extends BaseCrawler {
       const dom = await this.getDom(url);
       const $: CheerioStatic = cheerio.load(dom);
       const songList = JSON.parse($("textarea#song-list-pre-data").text());
+      let names: string = "";
       let result: songsResultInterface[] = songList.map(
         (item: any, index: number) => {
           const songTime = s_to_hs(Math.floor(item.duration / 1000));
           const id = item.id;
           const imgUrl = item.album.picUrl;
           const name = item.album.name;
+          names += name;
           const singerName = item.artists
             .map((singer: any) => {
               return singer.name;
@@ -101,7 +104,11 @@ class WangyiCrawler extends BaseCrawler {
         }
       );
       return new Success({
-        body: Object.assign({ result }, { total: result.length })
+        body: Object.assign(
+          { result },
+          { total: result.length },
+          { words: JieBa.extract(names, 100) }
+        )
       });
     } catch (error) {
       return new Failed({ body: error });

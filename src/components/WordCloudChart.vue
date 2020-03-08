@@ -90,6 +90,7 @@ export default class WordCloudChart extends Vue {
           // maskImage: maskImage,
           textStyle: {
             normal: {
+              top: '100px',
               color: function() {
                 return (
                   "rgb(" +

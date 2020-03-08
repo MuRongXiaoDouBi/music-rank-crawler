@@ -2,11 +2,13 @@
  * @Author: MuRong
  * @Date: 2020-02-24 19:06:53
  * @LastEditors: MuRong
- * @LastEditTime: 2020-02-25 17:13:31
+ * @LastEditTime: 2020-03-08 19:25:54
  * @Description:
- * @FilePath: \node-crawler\src\crawler\kuwo.ts
+ * @FilePath: \music-rank-crawler\server\src\crawler\kuwo.ts
  */
 import BaseCrawler from "./base";
+import JieBa from "nodejieba";
+
 import {
   typeResultInterface,
   typeListInterface,
@@ -82,12 +84,14 @@ class KuWoCrawler extends BaseCrawler {
     );
     if (code === 200) {
       const total: number = Number(data.num);
+      let names: string = "";
       let result: songsResultInterface = data.musicList.map(
         (item: any, index: number) => {
           const songTime = item.songTimeMinutes;
           const id = item.rid;
           const imgUrl = item.pic;
-          const name = item.name
+          const name = item.name;
+          names += name;
           const singerName = item.artist.split("&").join("/");
           const rank = index + 1;
           const url = `http://www.kuwo.cn/play_detail/${item.rid}`;
@@ -102,7 +106,13 @@ class KuWoCrawler extends BaseCrawler {
           };
         }
       );
-      return new Success({ body: Object.assign({ result }, { total }) });
+      return new Success({
+        body: Object.assign(
+          { result },
+          { total },
+          { words: JieBa.extract(names, 100) }
+        )
+      });
     } else {
       return new Failed({ msg: message });
     }

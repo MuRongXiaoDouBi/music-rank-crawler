@@ -2,7 +2,7 @@
  * @Author: MuRong
  * @Date: 2020-02-25 18:29:11
  * @LastEditors: MuRong
- * @LastEditTime: 2020-03-07 20:39:01
+ * @LastEditTime: 2020-03-08 19:34:15
  * @Description: 
  * @FilePath: \music-rank-crawler\src\App.vue
  -->
@@ -10,89 +10,101 @@
   <div class="home">
     <el-container>
       <el-header>
-        <el-tabs v-model="activeName" @tab-click="handleClickTab">
-          <el-tab-pane
-            :label="nav.title"
-            :name="String(nav.type)"
-            v-for="nav in tabList"
-            :key="nav.type"
-          >
-            <el-container>
-              <el-aside width="300px">
-                <el-menu v-if="navList">
-                  <el-submenu
-                    :index="String(index)"
-                    v-for="(nav, index) in navList"
-                    :key="nav.type"
-                  >
-                    <template slot="title">
-                      <span slot="title">{{ nav.title }}</span>
-                    </template>
-                    <el-menu-item
-                      :index="String(child.bangId)"
-                      v-for="child in nav.list"
-                      :key="child.bangId"
-                      @click="handleClickNav(child)"
-                      >{{ child.title }}
-                    </el-menu-item>
-                  </el-submenu>
-                </el-menu>
-              </el-aside>
-              <el-main>
-                <!-- <el-table
-                  :data="tableData"
-                  stripe
-                  style="width: 100%"
-                  v-loading.body="tableLoading"
-                >
-                  <el-table-column prop="rank" label="排名" align="center">
-                    <template slot-scope="scope">
-                      <span
-                        class="rank-text"
-                        :class="{
-                          'rank-first': scope.row.rank === 1,
-                          'rank-second': scope.row.rank === 2,
-                          'rank-third': scope.row.rank === 3
-                        }"
-                        >{{ scope.row.rank }}</span
+        <el-row :gutter="20">
+          <el-col :span="16">
+            <el-tabs v-model="activeName" @tab-click="handleClickTab">
+              <el-tab-pane
+                :label="nav.title"
+                :name="String(nav.type)"
+                v-for="nav in tabList"
+                :key="nav.type"
+              >
+                <el-container>
+                  <el-aside width="300px">
+                    <el-menu v-if="navList">
+                      <el-submenu
+                        :index="String(index)"
+                        v-for="(nav, index) in navList"
+                        :key="nav.type"
                       >
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="imgUrl"
-                    label="歌曲缩略图"
-                    align="center"
-                  >
-                    <template slot-scope="scope">
-                      <el-image
-                        :src="scope.row.imgUrl"
-                        style="width: 40px;height: 40px;"
-                      ></el-image>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="name" label="歌曲名称" align="center">
-                    <template slot-scope="scope">
-                      <el-link type="primary" :href="scope.row.url">{{
-                        scope.row.name
-                      }}</el-link>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="singerName"
-                    label="歌手姓名"
-                    align="center"
-                  ></el-table-column>
-                  <el-table-column
-                    prop="songTime"
-                    label="歌曲时间"
-                    align="center"
-                  ></el-table-column>
-                </el-table> -->
-                <Word-Cloud-Chart :data="words" v-if="words.length !== 0"></Word-Cloud-Chart>
-              </el-main>
-            </el-container>
-          </el-tab-pane>
-        </el-tabs>
+                        <template slot="title">
+                          <span slot="title">{{ nav.title }}</span>
+                        </template>
+                        <el-menu-item
+                          :index="String(child.bangId)"
+                          v-for="child in nav.list"
+                          :key="child.bangId"
+                          @click="handleClickNav(child)"
+                          >{{ child.title }}
+                        </el-menu-item>
+                      </el-submenu>
+                    </el-menu>
+                  </el-aside>
+                  <el-main>
+                    <el-table
+                      :data="tableData"
+                      stripe
+                      style="width: 100%"
+                      v-loading.body="tableLoading"
+                    >
+                      <el-table-column prop="rank" label="排名" align="center">
+                        <template slot-scope="scope">
+                          <span
+                            class="rank-text"
+                            :class="{
+                              'rank-first': scope.row.rank === 1,
+                              'rank-second': scope.row.rank === 2,
+                              'rank-third': scope.row.rank === 3
+                            }"
+                            >{{ scope.row.rank }}</span
+                          >
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        prop="imgUrl"
+                        label="歌曲缩略图"
+                        align="center"
+                      >
+                        <template slot-scope="scope">
+                          <el-image
+                            :src="scope.row.imgUrl"
+                            style="width: 40px;height: 40px;"
+                          ></el-image>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        prop="name"
+                        label="歌曲名称"
+                        align="center"
+                      >
+                        <template slot-scope="scope">
+                          <a class="el-link el-link--primary is-underline" :href="scope.row.url" target="_blank">{{ scope.row.name }}</a>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        prop="singerName"
+                        label="歌手姓名"
+                        align="center"
+                      ></el-table-column>
+                      <el-table-column
+                        prop="songTime"
+                        label="歌曲时间"
+                        align="center"
+                      ></el-table-column>
+                    </el-table>
+                  </el-main>
+                </el-container>
+              </el-tab-pane>
+            </el-tabs>
+          </el-col>
+          <el-col :span="8">
+            <Word-Cloud-Chart
+              title="排行榜最热词语"
+              :data="words"
+              v-if="words.length !== 0"
+            ></Word-Cloud-Chart>
+          </el-col>
+        </el-row>
       </el-header>
     </el-container>
   </div>
@@ -101,7 +113,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import request from "./request";
-import WordCloudChart from './components/WordCloudChart.vue'
+import WordCloudChart from "./components/WordCloudChart.vue";
 interface params {
   type: any;
   num: any;
@@ -169,7 +181,7 @@ export default class App extends Vue {
         value: item.weight
       };
     });
-    console.log(this.words)
+    console.log(this.words);
     this.tableLoading = false;
     this.tableData = res.result;
   }
